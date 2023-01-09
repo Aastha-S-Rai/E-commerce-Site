@@ -1,0 +1,141 @@
+{%extends 'base.html'%}
+{%block content%}
+{% load cartinfo%}
+{% load custom%}
+<section class="h-100 h-custom" style="background-color: #d2c9ff;">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12">
+                <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+                    <div class="card-body p-0">
+                        <div class="row g-0">
+                            <div class="col-lg-8">
+                                <div class="p-5">
+                                    <div class="d-flex justify-content-between align-items-center mb-5">
+                                        <h1 class="fw-bold mb-0 text-black">Shopping Cart</h1>
+                                        <h6 class="mb-0 text-muted"></h6>
+                                    </div>
+                                    <hr class="my-4">
+
+
+                                    {% for p in cart_prod %}
+                                    <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                        <div class="col-md-2 col-lg-2 col-xl-2">
+                                            <img src="{{p.image.url}}" class="img-fluid rounded-3" alt="Cotton T-shirt">
+                                        </div>
+                                        <div class="col-md-3 col-lg-3 col-xl-3">
+                                            <h6 class="text-muted">{{p.name}}</h6>
+                                            <h6 class="text-black mb-0">{{p.description}}</h6>
+                                        </div>
+                                        <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                                            <button class="btn btn-link px-2"
+                                                onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
+                                                -</i>
+                                            </button>
+
+                                            <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                                <h6 class="mb-0">{{p|cart_count:request.session.cart}}</h6>
+                                            </div>
+
+                                            <button class="btn btn-link px-2"
+                                                onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                                                +</i>
+                                            </button>
+                                        </div>
+                                        <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                            <h6 class="mb-0">{{p|product_price:request.session.cart|currency}}</h6>
+                                        </div>
+                                        <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                                            <!-- <i class="fas fa-times"></i> -->
+                                            <a href="#!" class="text-muted">X</a>
+                                        </div>
+                                    </div>
+
+                                    <hr class="my-4">
+                                    {% endfor%}
+
+
+                                    
+                                    <div class="pt-5">
+                                        <h6 class="mb-0"><a href="/" class="text-body"><i
+                                                    class="fas fa-long-arrow-alt-left me-2"></i>Back to shop</a></h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 bg-grey">
+                                <div class="p-5">
+                                    <h3 class="fw-bold mb-5 mt-2 pt-1">Summary</h3>
+                                    <hr class="my-4">
+
+                                    <div class="d-flex justify-content-between mb-4">
+                                        <h5 class="text-uppercase"> Products: {{cart_prod|total_products:request.session.cart}}</h5>
+                                        <h5>{{cart_prod|total_price:request.session.cart|currency}}</h5>
+                                    </div>
+
+                                    <!-- <h5 class="text-uppercase mb-3">Shipping</h5>
+
+                                    <div class="mb-4 pb-2">
+                                        <select class="select">
+                                            <option value="1">Standard-Delivery- €5.00</option>
+                                            <option value="2">Two</option>
+                                            <option value="3">Three</option>
+                                            <option value="4">Four</option>
+                                        </select>
+                                    </div> -->
+                                    
+                                    
+
+                                    <hr class="my-4">
+
+                                    <div class="d-flex justify-content-between mb-5">
+                                        <h5 class="text-uppercase">Total price</h5>
+                                        <h5>{{cart_prod|total_price:request.session.cart|currency}}</h5>
+                                    </div>
+                                    {% if request.session.user_id %}
+                                    <a href="/signup" class="btn btn-dark btn-block btn-lg" data-toggle="modal" data-target="#popupform"
+                                        data-mdb-ripple-color="dark">Place Order</a>
+                                    {%else%}
+                                    <a href="/checkout" class="btn btn-dark btn-block btn-lg" 
+                                        data-mdb-ripple-color="dark">login</a>
+                                    {%endif%}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Button trigger modal -->
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="popupform" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Delivery Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form action="checkout" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                  <label for="recipient-name" class="col-form-label">Contact number:</label>
+                  <input type="number" name="phone" class="form-control" id="recipient-name">
+                </div>
+                <div class="form-group">
+                  <label for="message-text" class="col-form-label">Address:</label>
+                  <textarea name="address" class="form-control" id="message-text"></textarea>
+                </div>
+                <button type="submit" class="btn btn-secondary modal-footer">Check Out</button>
+              </form>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+{%endblock%}
